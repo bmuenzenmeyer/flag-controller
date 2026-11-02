@@ -54,8 +54,8 @@ The operator is the logical comparator used to evaluate the feature flag. It tak
 
 | Operator | Use Case | Example |
 |----------|----------|---------|
-| **contains** | Check if a string value contains a substring OR if a value exists in a list of values. Also use this for **boolean values** (e.g., `true`, `false`). | Check if user email contains `@company.com` or if some context is `true` |
-| **does not contain** | Check if a string value does not contain a substring OR if a value does not exist in a list of values | Exclude users with emails containing `@competitor.com` |
+| **contains** | Check if a string value contains a substring. Also use this for **boolean values** (e.g., `true`, `false`). | Check if user email contains `@company.com` or if some context is `true` |
+| **does not contain** | Check if a string value does not contain a substring | Exclude users with emails containing `@competitor.com` |
 | **starts with** | Check if a string value begins with specific characters | Show specific features for specific routes where a route might start with `/settings/notifications` |
 | **does not start with** | Check if a string value does not begin with specific characters | Exclude users with usernames that don't start with `admin` |
 | **ends with** | Check if a string value ends with specific characters | Target users with emails ending in `@example.com` |
@@ -66,6 +66,8 @@ The operator is the logical comparator used to evaluate the feature flag. It tak
 | **less than or equal** | Compare numeric values for values at or below a threshold | Target users with account age `30` days or less |
 | **equals** | Match value | Target users in specific country (`US`) |
 | **does not equal** | Exclude specific value | Exclude users in specific country (`US`) |
+| **is one of** | Match a context attribute against any value in a list | Target users whose `user.language` is `english` or `spanish` |
+| **is not one of** | Match a context attribute only when it matches none of the values in a list | Exclude users whose `user.language` is `english` or `spanish` |
 | **matches minor version** | Compare semantic versions at minor level | Target applications running version `1.2.x` |
 | **matches major version** | Compare semantic versions at major level | Target applications running version `2.x.x` |
 
@@ -81,12 +83,40 @@ To use boolean values (`true` or `false`) in your rules, you must use the **cont
 
 Values align with the value of your context's attribute.
 
-:::info
-If you need to evaluate against a list of values, set your values as a comma delimited string.
+#### Multiple values
 
-**Example:**
-If you need to evaluate against `['US', 'UK']`, set your values to `US, UK`.
-:::
+To compare a context attribute against a list of values, select **is one of** or **is not one of**. These operators display a list input where you enter one value per line or paste a list from a spreadsheet or text file. Multiple values are only supported with these two operators. All values must match the selected type.
+
+For example, consider this evaluation context:
+
+```json
+{
+	"user": {
+		"language": "english"
+	}
+}
+```
+
+Here, `user.language` is a single string, not an array. Configure the condition as follows:
+
+| Field | Value |
+|-------|-------|
+| Context | `user` |
+| Attribute | `language` |
+| Operator | **is one of** |
+| Type | **String** |
+
+Enter these strings in the **Value** field, one per line:
+
+```text
+english
+spanish
+french
+```
+
+The condition matches because `english` is one of the strings in the list. With **is not one of**, the same condition would not match; a value outside the list, such as `german`, would match instead.
+
+The rule serves its configured variation when this condition and all other conditions in the rule are met, provided no earlier rule matches.
 
 ## Editing a rule
 
