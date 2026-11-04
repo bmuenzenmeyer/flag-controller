@@ -8,9 +8,7 @@
   "packageRules": [
     {
       "enabled": false,
-      "matchPackageNames": [
-        "*"
-      ]
+      "matchPackageNames": ["*"]
     }
   ],
   "vulnerabilityAlerts": {
